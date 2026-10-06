@@ -17,21 +17,27 @@ server.tool(
   },
   async ({ author, limit }) => {
     try {
-      const response = await fetch(`https://api.github.com/repos/llvm/llvm-project/commits?author=${author}&per_page=${limit}`);
+      // Switched to GitHub's Search API to prevent timeouts on massive repositories
+      const response = await fetch(`https://api.github.com/search/commits?q=repo:llvm/llvm-project+author:${author}&sort=author-date&order=desc&per_page=${limit}`, {
+        headers: {
+          "User-Agent": "Alexa-MCP-Server/1.0",
+          "Accept": "application/vnd.github.v3+json"
+        }
+      });
       
       if (!response.ok) {
-        return { content: [{ type: "text", text: `API Error: ${response.statusText}` }] };
+        return { content: [{ type: "text", text: `API Error: ${response.statusText} - ${await response.text()}` }] };
       }
 
-      const commits = await response.json();
+      const data = await response.json();
       
-      if (commits.length === 0) {
+      if (!data.items || data.items.length === 0) {
         return { content: [{ type: "text", text: `No recent LLVM commits found for author ${author}.` }] };
       }
 
-      const summary = commits.map((c: any) => {
-        const message = c.commit.message.split('\n')[0]; // Grab just the title of the commit
-        return `- [${c.sha.substring(0, 7)}] ${message} (Date: ${c.commit.author.date})`;
+      const summary = data.items.map((item: any) => {
+        const message = item.commit.message.split('\n')[0];
+        return `- [${item.sha.substring(0, 7)}] ${message} (Date: ${item.commit.author.date})`;
       }).join('\n');
 
       return {
