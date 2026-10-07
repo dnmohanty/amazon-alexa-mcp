@@ -11,3 +11,9 @@
 * **Expected:** Standard `/commits` GitHub API endpoint seamlessly filters the data.
 * **Actual:** Hitting the standard `/commits` endpoint with an author filter on a massive repo causes GitHub's API to time out, returning a `500 Internal Server Error` to the MCP server.
 * **Workaround:** Rewrote the tool to route the query through GitHub's `/search/commits` API endpoint instead, which instantly returns the filtered data without timing out.
+
+### Date: Oct 8
+* **Goal:** Generate a natural voice summary of GitHub commits using Amazon Bedrock.
+* **Expected:** The `amazon.titan-text-express-v1` model processes the text successfully.
+* **Actual:** The API returned an end-of-life error because the older Titan model version was retired and rejected the request.
+* **Workaround:** Upgraded the implementation to use the modern `ConverseCommand` API and routed the prompt to the active `amazon.nova-micro-v1:0` model.
