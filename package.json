@@ -18,12 +18,16 @@
   },
   "homepage": "https://github.com/dnmohanty/amazon-alexa-mcp#readme",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.6.4",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1147.0",
     "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
     "zod": "^4.6.5"
   },
   "type": "module"
